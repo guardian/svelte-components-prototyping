@@ -2,13 +2,9 @@
 
 ## What is this?
 
-This is an opinionated template for creating interactive atoms. It uses [Vite](https://vitejs.dev/) in combination with [Rollup](https://rollupjs.org/guide/en/) for a smooth development experience and fast builds.
+This is somewhere to prototype svelte components. It is very much a work in progress. If you want to copy the components folder into the  components folder in your existing project...
 
-- 💡 Instant local dev server start (no bundling required)
-- ⚡️ Instant visual feedback through [Hot Module Replacement (HMR)](https://vitejs.dev/guide/features.html#hot-module-replacement)
-- 🔧 Built-in support for [Preact](https://preactjs.com/) or [Svelte](https://svelte.dev/) (Svelte 5 or older, [see below](#using-svelte-5-or-older-versions))
-- 📝 Prerendering enabled by default
-- 📦 Effortless deployment
+degit guardian/svelte-components-prototyping/src/lib/components lib/components
 
 ## How to use the template
 
@@ -78,33 +74,6 @@ Source files that are shared by multiple atoms should be placed in the `/lib` fo
 
 ```js
 import SharedComponent from "$lib/components/SharedComponent.svelte"
-```
-
-## Preact support
-
-[Preact](https://preactjs.com/) support is enabled by default. It relies on the Preact plugin for Vite (`@preact/preset-vite`) in `vite.config.js`
-
-The `app.js` remains the entry point for the atom. Here's an example of what it would look like when using Preact:
-
-```js
-import "./styles/main.scss"
-import { render } from "preact"
-import Atom from "./components/Atom"
-
-render(<Atom />, document.getElementById("gv-atom"))
-```
-
-And here's an example of what `app.prerender.js` should look like:
-
-```js
-import renderToString from "preact-render-to-string"
-import mainHTML from "./main.html?raw"
-import Atom from "./components/Atom"
-
-export function render() {
-  const html = renderToString(<Atom />)
-  return mainHTML.replace("{{ html }}", html)
-}
 ```
 
 ## Other features
