@@ -4,7 +4,7 @@
 
 This is somewhere to prototype svelte components. It is very much a work in progress. If you want to copy the components folder into the  components folder in your existing project...
 
-degit guardian/svelte-components-prototyping/src/lib/components lib/components
+degit guardian/svelte-components-prototyping/src/lib/components src/lib/components
 
 ## How to use the template
 
