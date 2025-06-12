@@ -9,12 +9,6 @@
     "dev": "vite",
     "lint": "eslint .",
     "format": "prettier . --check",
-    "preview": "node scripts/preview.js",
-    "deploy": "node scripts/deploy.js",
-    "deploy:preview": "node scripts/deploy.js --preview",
-    "deploy:live": "node scripts/deploy.js --live",
-    "deploylog:preview": "node scripts/deploylog.js --preview",
-    "deploylog:live": "node scripts/deploylog.js",
     "start": "vite"
   },
   "devDependencies": {
