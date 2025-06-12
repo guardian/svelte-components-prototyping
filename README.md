@@ -34,49 +34,6 @@ To build for production:
 npm run build
 ```
 
-Builds will be placed in the `/build` directory.
-
-### Deployment
-
-Fill out `project.config.js`:
-
-```js
-{
-    "title": "Title of your interactive",
-    "path": "year/month/unique-title"
-}
-```
-
-To deploy to the Interactives S3 bucket you need AWS credentials for the Interactives account in your command line. You can get these from the Guardian's permissions manager system [Janus](https://janus.gutools.co.uk/). You need to be assigned these permissions and be on a Guardian network or VPN to see them on Janus.
-
-By default you'll want to run this command:
-
-```
-npm run deploy:live
-```
-
-But **if you're making changes to an atom that has already been published**, it is advisable to use:
-
-```
-npm run deploy:preview
-```
-
-This will make the changes visible in composer preview, but not on the live page, allowing the atom to be tested before being published to the live page.
-
-Running the deploy task will output the url to be embedded in Composer.
-
-To verify that deploy was picked up sucessfully:
-
-```
-npm run deploylog:live
-```
-
-Or:
-
-```
-npm run deploylog:preview
-```
-
 ## Project structure
 
 The files that make up your interactive atom live in the `/src` directory. This is what a typical src directory looks like:
