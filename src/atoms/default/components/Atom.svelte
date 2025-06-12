@@ -1,10 +1,57 @@
-
 <script>
+  // Core imports
   import { onMount } from 'svelte'
   import PageSection from "$lib/components/PageSection.svelte";
+  import SearchInput from '$lib/components/SearchInput.svelte';
+  import { getJson, autocomplete } from '$lib/helpers/toolbelt.js';
 
   //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
   //import Scrolly from '$lib/components/Scrolly.svelte'
+  
+
+  // Component props
+  let { name } = $props()
+
+  // Component lifecycle
+  onMount(async() => {
+    // Example data fetching (currently disabled)
+    // await getExampleData()
+    // setInterval(async () => {
+    //   await getExampleData()
+    // }, 60000)
+  })
+
+  // Search state
+  let inputValue = "";
+
+  // Search configuration
+  const searchOptions = ["Andy", "Barb", "Baz", "Bazza", "Bazzaa"];
+
+  // Search event handlers
+  async function searchInputChanged(val) {
+    const searchResults = await autocomplete(val, searchOptions);
+    return searchResults.slice(0, 5); // Limit to 5 suggestions
+  }
+
+  function onSubmit(val) {
+    if (val?.text) {
+      selectSuggestion(val);
+    }
+  }
+
+  function selectSuggestion(suggestion) {
+    inputValue = suggestion.text;
+  }
+
+  function onClear() {
+    inputValue = "";
+  }
+
+  function onFocus() {
+    console.log("Input focused");
+  }
+
+  // Component styles
   const fullWidthStyles = {
     section: "_section_1xpz0_39",
     borderTop: "_borderTop_1xpz0_9",
@@ -14,16 +61,17 @@
     fullWidth: "_fullWidth_1xpz0_39",
   };
 
-onMount(async() =>{
-  // await getExampleData()
-  // setInterval(async () => {
-  //   await getExampleData()
-  // }, 60000)
-
-})
-  let { name } = $props()
-
-
+  // Search input styles
+  const searchStyles = {
+    searchContainer: "_searchContainer_1kj0x_1",
+    input: "_input_1kj0x_5",
+    searchIcon: "_searchIcon_1kj0x_27",
+    clearButton: "_clearButton_1kj0x_36",
+    suggestions: "_suggestions_1kj0x_42",
+    suggestion: "_suggestion_1kj0x_42",
+    selected: "_selected_6u92g_85",
+    highlighted: "_highlighted_1kj0x_77"
+  };
 </script>
 
 
@@ -54,6 +102,22 @@ onMount(async() =>{
   >
     <div slot="content" class="_content_yckna_51" style="position:relative;">
       <!-- Drop your componet here  -->
+
+      <div class="_overlay_search">
+        <div class="_search_yckna_47">
+          <SearchInput
+            placeholder="Search for something..."
+            {inputValue}
+            onInputChange={searchInputChanged}
+            onSubmit={onSubmit}
+            onSelect={selectSuggestion}
+            onClear={onClear}
+            {onFocus}
+            styles={searchStyles}
+          />
+        </div>
+      </div>
+
     </div>
   </PageSection>
 

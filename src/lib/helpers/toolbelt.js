@@ -21,17 +21,6 @@ export async function getJson(url) {
   }
 }
 
-export function partyNames(party) {
-        return (party=="Australian Labor Party") ? "Labor" :
-        (party=="Liberal National Party of Queensland") ? "LNP" :
-        (party=="The Nationals") ? "National" :
-        (party=="The Greens (VIC)") ? "Greens" : 
-        (party=="Pauline Hanson's One Nation") ? 'One Nation' :
-        (party=="Independent") ? 'Independent' :
-        (party=="United Australia Party") ? 'UAP' :
-        (party=="Katter's Australian Party (KAP)") ? 'Katter Party' :
-        (party=="Centre Alliance") ? 'Centre Alliance' : party ;
-}
 
 export function merge(to, from) {
 
@@ -78,12 +67,6 @@ export function commas(num) {
     result = result.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
     return result
 }
-
-/*
-  export function commas(num) {
-    return num.toLocaleString();
-  }
-*/
 
 export function createTickerFeed(data) {
     // Filter out any entries with an empty prediction.
@@ -197,16 +180,16 @@ export function timeAgo(inputTime) {
   }
   
 
-  export function autocomplete(inputValue, places) {
+  export function autocomplete(inputValue, arrayOfStuff) {
     if (!inputValue || inputValue.length === 0) {
       return []
     }
 
-    let topSuggestions = places.filter((item) => {
+    let topSuggestions = arrayOfStuff.filter((item) => {
       return item.toLowerCase().startsWith(inputValue.toLowerCase())
     })
 
-    let otherSuggestions = places.filter((item) => {
+    let otherSuggestions = arrayOfStuff.filter((item) => {
       if (topSuggestions.includes(item)) {
         return false
       }
