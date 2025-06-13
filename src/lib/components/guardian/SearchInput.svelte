@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
-  import SearchIcon from '$lib/components/SearchIcon.svelte';
-  import CloseButton from '$lib/components/CloseButton.svelte';
+  import SearchIcon from '$lib/components/guardian/SearchIcon.svelte';
+  import CloseButton from '$lib/components/guardian/CloseButton.svelte';
 
   // Props (with defaults where applicable)
   export let placeholder = "";

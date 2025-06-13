@@ -1,8 +1,8 @@
 <script>
   // Core imports
   import { onMount } from 'svelte'
-  import PageSection from "$lib/components/PageSection.svelte";
-  import SearchInput from '$lib/components/SearchInput.svelte';
+  import PageSection from "$lib/components/guardian/PageSection.svelte";
+  import SearchInput from '$lib/components/guardian/SearchInput.svelte';
   import { getJson, autocomplete } from '$lib/helpers/toolbelt.js';
 
   //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
