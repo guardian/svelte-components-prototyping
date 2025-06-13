@@ -20,6 +20,36 @@
 
   </script>
   
+  <style lang="scss">
+    /* Guardian gradient stop color utility classes adapted from component.scss */
+    .stop-color--con { stop-color: var(--con); }
+    .stop-color--lab { stop-color: var(--lab); }
+    .stop-color--libdem { stop-color: var(--libdem); }
+    .stop-color--green { stop-color: var(--green); }
+    .stop-color--ukip { stop-color: var(--ukip); }
+    .stop-color--snp { stop-color: var(--snp); }
+    .stop-color--dup { stop-color: var(--dup); }
+    .stop-color--alliance { stop-color: var(--alliance); }
+    .stop-color--alba { stop-color: var(--alba); }
+    .stop-color--uup { stop-color: var(--uup); }
+    .stop-color--sdlp { stop-color: var(--sdlp); }
+    .stop-color--pc { stop-color: var(--pc); }
+    .stop-color--sf { stop-color: var(--sf); }
+    .stop-color--reform { stop-color: var(--reform); }
+    .stop-color--ind { stop-color: var(--ind); }
+    .stop-color--other { stop-color: var(--other); }
+    .stop-color--speaker { stop-color: var(--speaker); }
+    .stop-color--undeclared { stop-color: var(--undeclared); }
+    .stop-color--noc { stop-color: var(--noc); }
+    .stop-color--wpb { stop-color: var(--wpb); }
+    /* Add more as needed based on palette */
+    ._svg_ihy3w_6 {
+      width: 24px;
+      height: 11px;
+      display: block;
+    }
+  </style>
+  
   <svg
     class={mergedStyles.svg}
     width="24"

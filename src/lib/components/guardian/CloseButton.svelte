@@ -32,3 +32,46 @@
     />
   </svg>
 </button>
+
+<style lang="scss">
+  /* Guardian close button styles adapted from component.scss */
+  button {
+    border: none;
+    margin: 0;
+    padding: 0;
+    text-align: inherit;
+    font: inherit;
+    border-radius: 50%;
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .buttonBorderClass {
+    border: 1px solid var(--border-divider-color, #dcdcdc);
+  }
+  button:hover:enabled {
+    background-color: var(--news-grey-05, #f6f6f6);
+  }
+  button:active {
+    background-color: var(--highlight-color, #ffe500);
+  }
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  ._svg_1bibm_22 {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+  ._path_1bibm_29 {
+    stroke: var(--primary-text-color, #121212);
+    fill: var(--primary-text-color, #121212);;
+    stroke-width: 1;
+  }
+</style>

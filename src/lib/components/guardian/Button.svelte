@@ -1,10 +1,20 @@
 <script>
-    export let label = "Read more";
-    export let colour = "#ffe500";
-    export let background = "#121212";
-    export let onClick = () => {};
+    // Component props using $props()
+    let { 
+        label = "Read more",
+        colour = "#ffe500",
+        background = "#121212",
+        onClick = () => {}
+    } = $props();
 
-    let width = 0
+    // Reactive state using $state()
+    let width = $state(0);
+
+    // Effect to handle width changes
+    $effect(() => {
+        // Any side effects based on width changes can go here
+        console.debug('Button width updated:', width);
+    });
 </script>
   
 <button class="guardian-button button-sm" on:click={onClick} style="background-color: {background}; width: {width + 15}px;">
@@ -19,6 +29,17 @@
 </button>
   
 <style lang="scss">
+    /* Guardian button styles adapted from component.scss */
+    button {
+        background-color: transparent;
+        border: none;
+        margin: 0;
+        padding: 0;
+        text-align: inherit;
+        font: inherit;
+        border-radius: 0;
+        box-sizing: border-box;
+    }
     .guardian-button {
         padding: 0 5px;
         border: none;
@@ -26,13 +47,10 @@
         margin-top: 12px;
         height: 36px;
         cursor: pointer;
+        transition: background 0.2s;
 
         div {
             float: left;
-        }
-
-        svg {
-            //rotate: 90deg;
         }
 
         ._button_wrap {
@@ -50,6 +68,7 @@
             line-height: var(--sans-line-height);
             font-weight: 700;
             padding: 0 4px;
+            color: var(--primary-button-text-color, #fff);
         }
         
         .icon {
@@ -60,7 +79,16 @@
             height: 44px;
             padding: 0 12px;
         }
-        
+        &:hover:enabled {
+            background-color: var(--primary-button-highlight-color, #333);
+        }
+        &:active {
+            background-color: var(--highlight-color, #ffe500);
+        }
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
     }
 </style>
   

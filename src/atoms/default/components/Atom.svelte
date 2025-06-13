@@ -5,6 +5,8 @@
   import SearchInput from '$lib/components/guardian/SearchInput.svelte';
   import { getJson, autocomplete } from '$lib/helpers/toolbelt.js';
 
+  import Button from "$lib/components/guardian/Button.svelte";
+
   //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
   //import Scrolly from '$lib/components/Scrolly.svelte'
   
@@ -89,6 +91,11 @@
     </div>
     <div slot="content">
       <!-- Drop your componet here  -->
+       <Button
+       label={"Test button"}
+       colour={"#ffe500"}
+       background={"#121212"}
+       onClick={() => {console.log("Clicked")}}/>
     </div>
   </PageSection>
 

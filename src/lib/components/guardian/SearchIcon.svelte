@@ -6,6 +6,18 @@
   };
 </script>
 
+<style lang="scss">
+  /* Guardian icon and SVG styles adapted from component.scss */
+  .your-svg-class {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+  .your-path-class {
+    fill: var(--primary-text-color, #121212);
+  }
+</style>
+
 <svg
   viewBox="0 0 20 20"
   xmlns="http://www.w3.org/2000/svg"
