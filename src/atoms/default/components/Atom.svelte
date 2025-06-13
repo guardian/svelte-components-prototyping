@@ -8,6 +8,7 @@
   import Button from "$lib/components/guardian/Button.svelte";
   import Switch from "$lib/components/guardian/Switch.svelte";
   import Dropdown from '$lib/components/guardian/Dropdown.svelte';
+  import AudioPlayer from '$lib/components/guardian/AudioPlayer.svelte';
 
   //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
   //import Scrolly from '$lib/components/Scrolly.svelte'
@@ -80,6 +81,11 @@
 
 
 <div class="atom">
+
+  <AudioPlayer 
+    srt={"hamada-voice-canada.srt"}
+    src={"hamada-voice-canada.mp3"}
+  />
 
   <Switch 
   label1={"off"}
