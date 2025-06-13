@@ -7,6 +7,7 @@
 
   import Button from "$lib/components/guardian/Button.svelte";
   import Switch from "$lib/components/guardian/Switch.svelte";
+  import Dropdown from '$lib/components/guardian/Dropdown.svelte';
 
   //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
   //import Scrolly from '$lib/components/Scrolly.svelte'
@@ -84,6 +85,13 @@
   label1={"off"}
   label2={"on"}
   on:change={() => {console.log("Switch changed")}}
+  />
+
+  <Dropdown 
+    dropdowns={[{ value : "0", label : "London" }, { value : "1", label : "Paris" }, { value : "2", label : "Berlin" }]} 
+    currentSelection={"0"}
+    label={"Selected city"} 
+    on:updateDropdown={() => {console.log("Dropdown updated")}}
   />
 
   <!-- Deault layout -->
