@@ -6,6 +6,7 @@
   import { getJson, autocomplete } from '$lib/helpers/toolbelt.js';
 
   import Button from "$lib/components/guardian/Button.svelte";
+  import Switch from "$lib/components/guardian/Switch.svelte";
 
   //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
   //import Scrolly from '$lib/components/Scrolly.svelte'
@@ -78,6 +79,12 @@
 
 
 <div class="atom">
+
+  <Switch 
+  label1={"off"}
+  label2={"on"}
+  on:change={() => {console.log("Switch changed")}}
+  />
 
   <!-- Deault layout -->
   <PageSection

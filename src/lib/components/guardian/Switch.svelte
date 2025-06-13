@@ -1,18 +1,31 @@
 <script>
     import { createEventDispatcher } from 'svelte';
   
-    export let checked = false;
-    export let label1 = 'By 2PP';
-    export let label2 = 'By 2CP';
+    // Component props using $props()
+    let { 
+      checked = false,
+      label1 = 'off',
+      label2 = 'on',
+      sliderColor = '#8b0000', // default background color
+      sliderCheckedColor = '#880c0c', // background when checked
+      thumbColor = 'red' // thumb color
+    } = $props();
   
-    export let sliderColor = '#8b0000'; // default background color
-    export let sliderCheckedColor = '#880c0c'; // background when checked
-    export let thumbColor = 'red'; // thumb color
-  
+    // Create event dispatcher
     const dispatch = createEventDispatcher();
   
+    // Reactive state using $state()
+    let isChecked = $state(checked);
+  
+    // Effect to handle checked state changes
+    $effect(() => {
+      // Update parent component when checked state changes
+      dispatch('change', isChecked);
+    });
+  
+    // Handle checkbox change
     function handleChange(event) {
-      dispatch('change', event.target.checked);
+      isChecked = event.target.checked;
     }
   </script>
   
@@ -27,7 +40,7 @@
   <div class="switch-label">{label1}</div>
   <div class="switch-box">
     <label class="switch">
-      <input type="checkbox" bind:checked={checked} on:change={handleChange} />
+      <input type="checkbox" checked={isChecked} on:change={handleChange} />
       <span class="slider round"></span>
     </label>
   </div>
