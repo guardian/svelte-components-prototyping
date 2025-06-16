@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	/** @type {string} - The selector for the atom element to resize */
-	export let atomName;
+	export let atomName = "#gv-atom"
 
 	/**
 	 * Detects height changes of an element and calls a callback when changes occur
