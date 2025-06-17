@@ -10,6 +10,8 @@
   import Dropdown from '$lib/components/guardian/Dropdown.svelte';
   import AudioPlayer from '$lib/components/guardian/AudioPlayer.svelte';
 
+  
+
   //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
   //import Scrolly from '$lib/components/Scrolly.svelte'
   
@@ -27,7 +29,7 @@
   })
 
   // Search state
-  let inputValue = "";
+  let inputValue = $state("");
 
   // Search configuration
   const searchOptions = ["Andy", "Barb", "Baz", "Bazza", "Bazzaa"];
@@ -83,8 +85,10 @@
 <div class="atom">
 
   <AudioPlayer 
-    srt={"hamada-voice-canada.srt"}
-    src={"hamada-voice-canada.mp3"}
+    srt={"https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/hamada-voice-canada.srt"}
+    src={"https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/hamada-voice-canada.mp3"}
+    pic={"https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/hamada.jpg"}
+    track={"Text that appears before the audio plays"}
   />
 
   <Switch 
@@ -100,6 +104,7 @@
     on:updateDropdown={() => {console.log("Dropdown updated")}}
   />
 
+  
   <!-- Deault layout -->
   <PageSection
     id="national-results"
@@ -113,13 +118,14 @@
     <div slot="content">
       <!-- Drop your componet here  -->
        <Button
-       label={"Test button"}
-       colour={"#ffe500"}
-       background={"#121212"}
-       onClick={() => {console.log("Clicked")}}/>
+        label={"Test button"}
+        colour={"#ffe500"}
+        background={"#121212"}
+        onClick={() => {console.log(`Clicked`)}}
+       />
     </div>
   </PageSection>
-
+  
   <!-- Full width section -->
   <PageSection
     id="map-section"
@@ -129,20 +135,22 @@
     styles={fullWidthStyles}
   >
     <div slot="content" class="_content_yckna_51" style="position:relative;">
+
+      <SearchInput
+      placeholder="Search for something..."
+      {inputValue}
+      onInputChange={searchInputChanged}
+      onSubmit={onSubmit}
+      onSelect={selectSuggestion}
+      onClear={onClear}
+      {onFocus}
+      styles={searchStyles}
+    />
       <!-- Drop your componet here  -->
 
       <div class="_overlay_search">
         <div class="_search_yckna_47">
-          <SearchInput
-            placeholder="Search for something..."
-            {inputValue}
-            onInputChange={searchInputChanged}
-            onSubmit={onSubmit}
-            onSelect={selectSuggestion}
-            onClear={onClear}
-            {onFocus}
-            styles={searchStyles}
-          />
+
         </div>
       </div>
 
@@ -156,6 +164,7 @@
   {/if} -->
 
   <!-- <Scrolly></Scrolly> -->
+
 </div>
 
 <style lang="scss">
@@ -163,6 +172,7 @@
   .atom {
     width:100%;
     position: relative;
+    
   }
 
   h2 {
@@ -170,5 +180,7 @@
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 20px;
+
+  
   }
 </style>

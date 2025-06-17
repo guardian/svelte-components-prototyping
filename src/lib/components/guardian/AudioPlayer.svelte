@@ -9,12 +9,11 @@
 
 
 
-  export let srt = "hamada-voice-canada.srt"
-  export let src = "hamada-voice-canada.mp3"
-  export let pic = "hamada.jpg"
-  export let track = "Hi Canada, I hope to see..."
-  export let id = 1
-  let audioUrl = `https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/${src}`;
+  export let srt = "https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/hamada-voice-canada.srt"
+  export let src = "https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/hamada-voice-canada.mp3"
+  export let pic = "https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/hamada.jpg"
+  export let track = ""
+  let audioUrl = `${src}`;
   let loaded = false
   let mounted = false
   let observer
@@ -247,7 +246,7 @@
 
   onMount(async () => {
     ctx = canvas.getContext('2d');
-    monologue = await loadSrt(`https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/${srt}`);
+    monologue = await loadSrt(`${srt}`);
     mounted = true
 
     return () => {
@@ -285,7 +284,7 @@
       <canvas bind:this={canvas} width={panelWidth} height="50"></canvas>
     </div>
 
-    <div class="byline_block" style="background-image:url(https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/{pic});"></div>
+    <div class="byline_block" style="background-image:url({pic});"></div>
   </div>
 
   <div class="progress-bar-container">

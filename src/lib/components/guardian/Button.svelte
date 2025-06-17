@@ -1,3 +1,4 @@
+
 <script>
     // Component props using $props()
     let { 
