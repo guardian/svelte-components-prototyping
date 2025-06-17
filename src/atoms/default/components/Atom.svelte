@@ -9,7 +9,7 @@
   import Switch from "$lib/components/guardian/Switch.svelte";
   import Dropdown from '$lib/components/guardian/Dropdown.svelte';
   import AudioPlayer from '$lib/components/guardian/AudioPlayer.svelte';
-
+  import VideoPlayer from '$lib/components/guardian/VideoPlayer.svelte';
   
 
   //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
@@ -117,12 +117,20 @@
     </div>
     <div slot="content">
       <!-- Drop your componet here  -->
-       <Button
+      <VideoPlayer 
+        src="coachella-wide"
+        path="https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza"
+        placeholder="https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/coachella-wide.jpg"
+        srt="https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/coachella-wide.vtt"
+        testing={false}
+      />
+
+       <!--Button
         label={"Test button"}
         colour={"#ffe500"}
         background={"#121212"}
         onClick={() => {console.log(`Clicked`)}}
-       />
+       /-->
     </div>
   </PageSection>
   
