@@ -117,6 +117,9 @@
     </div>
     <div slot="content">
       <!-- Drop your componet here  -->
+
+
+
       <VideoPlayer 
         src="coachella-wide"
         path="https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza"

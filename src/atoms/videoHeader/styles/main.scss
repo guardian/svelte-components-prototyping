@@ -1,0 +1,25 @@
+@import "$lib/styles/fonts.scss";
+@import "$lib/styles/palette.scss";
+@import "$lib/styles/mq.scss";
+@import "$lib/styles/defaults.scss";
+@import "$lib/styles/layout.scss";
+// if using component library, lightmode and darkmode colors should be included from there. Comment out import line below
+// (and media query using the dark-mode-colors and light-mode-colors imports) to avoid CSS variables overriding each other
+@import "$lib/styles/_colors.scss";
+
+// @import "$lib/styles/full-width-immersive-layout.scss"; // uncomment for full width layout
+// @import "$lib/styles/enhanced_fonts.scss"; // when you need special font features such as lining figures
+
+body {
+  @include light-mode-colors;
+
+  // dark-mode styles eg:
+  // background-color: var(--primary-bg-color) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  body.ios,
+  body.android {
+    @include dark-mode-colors;
+  }
+}
