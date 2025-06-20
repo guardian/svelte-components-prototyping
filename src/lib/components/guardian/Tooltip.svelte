@@ -1,5 +1,5 @@
 <script>
-	import { mustache } from '$lib/helpers/toolbelt.js';
+	import { mustache } from '$lib/helpers/guardian/toolbelt.js';
 	export let x = 0;
 	export let y = 0;
 	export let text = {};
