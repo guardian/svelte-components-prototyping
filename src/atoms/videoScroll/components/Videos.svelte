@@ -48,7 +48,7 @@ $effect(() => {
 	if (activeVideo) {
 		console.log(`Initializing playback state for video ${activeVideo.vid}, autoplay: ${activeVideo.autoplay}`);
 		// Set initial state based on autoplay setting
-		import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+		import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
 			setVideoPlaying(activeVideo.autoplay);
 		});
 	}
@@ -274,20 +274,20 @@ async function playActiveVideo() {
             await videoElement.play();
             console.log(`Successfully started playing video ${activeVideo.vid}`);
             // Update the playback state to reflect that video is now playing
-            import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+            import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
               setVideoPlaying(true);
             });
           } catch (error) {
             console.log(`Autoplay failed for video ${activeVideo.vid}:`, error);
             // If autoplay fails, set the state to false
-            import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+            import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
               setVideoPlaying(false);
             });
           }
         } else {
           console.log(`Video ${activeVideo.vid} has autoplay disabled`);
           // For non-autoplay videos, set the state to false
-          import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+          import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
             setVideoPlaying(false);
           });
         }
@@ -384,13 +384,13 @@ function handleVideoLoad(videoId) {
       videoElement.play().catch(error => {
         console.log('Autoplay failed for video', videoId, error);
         // If autoplay fails, set the state to false
-        import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+        import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
           setVideoPlaying(false);
         });
       });
     } else {
       // For non-autoplay videos, set the state to false
-      import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+      import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
         setVideoPlaying(false);
       });
     }
@@ -417,13 +417,13 @@ function handleVideoCanPlay(videoId) {
       videoElement.play().catch(error => {
         console.log('Autoplay failed for video', videoId, error);
         // If autoplay fails, set the state to false
-        import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+        import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
           setVideoPlaying(false);
         });
       });
     } else if (!video?.autoplay) {
       // For non-autoplay videos, set the state to false
-      import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+      import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
         setVideoPlaying(false);
       });
     }
@@ -434,7 +434,7 @@ function handleVideoCanPlay(videoId) {
 function handleVideoPlay(videoId) {
   console.log(`Video ${videoId} started playing`);
   if (videoId === active) {
-    import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+    import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
       setVideoPlaying(true);
     });
   }
@@ -444,7 +444,7 @@ function handleVideoPlay(videoId) {
 function handleVideoPause(videoId) {
   console.log(`Video ${videoId} paused`);
   if (videoId === active) {
-    import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+    import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
       setVideoPlaying(false);
     });
   }
@@ -454,7 +454,7 @@ function handleVideoPause(videoId) {
 function handleVideoEnded(videoId) {
   console.log(`Video ${videoId} ended`);
   if (videoId === active) {
-    import('$lib/stores/app.js').then(({ setVideoPlaying }) => {
+    import('$lib/stores/videoScroll.js').then(({ setVideoPlaying }) => {
       setVideoPlaying(false);
     });
     
