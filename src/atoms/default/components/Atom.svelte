@@ -3,7 +3,7 @@
   import { onMount } from 'svelte'
   import PageSection from "$lib/components/guardian/PageSection.svelte";
   import SearchInput from '$lib/components/guardian/SearchInput.svelte';
-  import { getJson, autocomplete } from '$lib/helpers/toolbelt.js';
+  import { getJson, autocomplete } from '$lib/helpers/guardian/toolbelt.js';
 
   import Button from "$lib/components/guardian/Button.svelte";
   import Switch from "$lib/components/guardian/Switch.svelte";
