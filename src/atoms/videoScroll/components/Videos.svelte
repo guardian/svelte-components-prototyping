@@ -2,7 +2,7 @@
   
 	import Nav from './Nav.svelte'
   
-	import { showCaptions, isMuted, isVideoPlaying } from '$lib/stores/videoScollie.js'
+	import { showCaptions, isMuted, isVideoPlaying } from '$lib/stores/videoScroll.js'
 
     let { videos,
 		url = 'https://interactive.guim.co.uk/embed/aus/2025/06/frontline',

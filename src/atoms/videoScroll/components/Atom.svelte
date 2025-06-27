@@ -6,7 +6,7 @@
   import Footer from './Footer.svelte'
   import Skip from './Skip.svelte'
   import { getJson } from '$lib/helpers/guardian/toolbelt'
-  import { showCaptions, isMuted, toggleCaptions, toggleMuted } from '$lib/stores/videoScollie.js'
+  import { showCaptions, isMuted, toggleCaptions, toggleMuted } from '$lib/stores/videoScroll.js'
 
   let application = null;
   let episode = 4; //

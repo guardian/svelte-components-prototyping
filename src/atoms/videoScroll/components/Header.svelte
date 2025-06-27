@@ -1,5 +1,5 @@
 <script>
-    import { isMuted, toggleMuted } from '$lib/stores/videoScollie.js'
+    import { isMuted, toggleMuted } from '$lib/stores/videoScroll.js'
 
     let { headline, standfirst, tag } = $props()
 </script>
