@@ -24,7 +24,7 @@
         topoURL = `https://interactive.guim.co.uk/embed/aus/gis-uploads/data/melbourne.json`,
         margin = 100,
         VIEWPORT_WIDTH = 1080,
-        VIEWPORT_HEIGHT = 720,
+        VIEWPORT_HEIGHT = 1080,
         useBaseMapBbox = false,
     } = $props();
 
@@ -80,6 +80,8 @@
     } 
 
     onMount(async () => {
+
+
         await loadData()
         projection = d3.geoMercator();
 
@@ -92,9 +94,14 @@
             imageEl.src = imageUrl;
         }
 
-        const imageProps = imageBBox.features[0].properties;
+        const imageProps = imageBBox.features[0].properties;    
         let imageHeight = imageProps.height;
         let imageWidth = imageProps.width;
+
+        if (useBaseMapBbox) {
+            VIEWPORT_WIDTH = imageBBox.features[0].properties.width;
+            VIEWPORT_HEIGHT = imageBBox.features[0].properties.height;
+        }
 
         // Initialize map data if topojson is available
         if (topoData?.objects) {
