@@ -10,12 +10,13 @@
   import Dropdown from '$lib/components/guardian/Dropdown.svelte';
   import AudioPlayer from '$lib/components/guardian/AudioPlayer.svelte';
   import VideoPlayer from '$lib/components/guardian/VideoPlayer.svelte';
+  import BaseMap from '$lib/components/guardian/BaseMap.svelte';
+
   
 
   //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
   //import Scrolly from '$lib/components/Scrolly.svelte'
   
-
   // Component props
   let { name } = $props()
 
@@ -84,6 +85,8 @@
 
 <div class="atom">
 
+  <BaseMap />
+
   <AudioPlayer 
     srt={"https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/hamada-voice-canada.srt"}
     src={"https://interactive.guim.co.uk/embed/aus/2024/07/leaving-gaza/hamada-voice-canada.mp3"}
@@ -136,6 +139,13 @@
        /-->
     </div>
   </PageSection>
+
+  <Button
+    label={"Test button"}
+    colour={"#ffe500"}
+    background={"#121212"}
+    onClick={() => {console.log(`Clicked`)}}
+  />
   
   <!-- Full width section -->
   <PageSection
@@ -191,7 +201,6 @@
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 20px;
-
   
   }
 </style>
