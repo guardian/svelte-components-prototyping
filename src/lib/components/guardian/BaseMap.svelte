@@ -7,6 +7,7 @@
     /* This component is used to display base maps created in pollarama.
     /* By default the pollarama settings accompanying the image are used to set the bbox and projection.
     /* If you pass in topojson because you have set a valid topoURL, it will be used to set the bbox and projection.
+    /* You can for the map to use the base map bbox by setting useBaseMapBbox to true.
     /* The imageUrl is the path to the base map image created using pollarama.
     /* The imageBBox is pulled from the pollarama settings
     /* The boundaryData is displayed as geographical boundarties.
@@ -24,7 +25,7 @@
         margin = 100,
         VIEWPORT_WIDTH = 1080,
         VIEWPORT_HEIGHT = 720,
-        useBaseMapBbox = true,
+        useBaseMapBbox = false,
     } = $props();
 
     let width = $state(null);
