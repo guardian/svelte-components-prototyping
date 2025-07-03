@@ -1,0 +1,103 @@
+@import "$lib/styles/fonts.scss";
+@import "$lib/styles/palette.scss";
+@import "$lib/styles/mq.scss";
+@import "$lib/styles/defaults.scss";
+@import "$lib/styles/layout.scss";
+// if using component library, lightmode and darkmode colors should be included from there. Comment out import line below
+// (and media query using the dark-mode-colors and light-mode-colors imports) to avoid CSS variables overriding each other
+@import "$lib/styles/_colors.scss";
+@import "./component.scss";
+
+:root {
+  --sans-small: 14px !important;
+  --sans-medium: 15px !important;
+}
+
+// to view this atom in dark mode, add the class "ios" to the body element in the harness you are using and switch your computer mode to dark mode.
+body {
+  @include light-mode-colors;
+
+  background-color: var(--primary-bg-color) !important;
+  --sub-meta-background: var(--primary-bg-color);
+
+  .element-atom {
+    h1,
+    h2,
+    h3,
+    p,
+    span {
+      color: var(--primary-text-color);
+    }
+  }
+
+  main {
+    background-image: url("__assetsPath__/pattern.svg");
+    background-size: 14px 14px;
+    background-repeat: repeat;
+  }
+}
+
+body {
+  --top-inset: 0px;
+  &.android {
+    --top-inset: 60px;
+  }
+}
+
+body.ios,
+body.android {
+  div.article__header,
+  div.article__body {
+    background: none !important;
+  }
+  div.article__header {
+    background-image: url("__assetsPath__/pattern.svg") !important;
+    background-size: 14px 14px !important;
+    background-repeat: repeat !important;
+  }
+  .meta,
+  .headline,
+  .standfirst,
+  .standfirst__inner {
+    background: none !important;
+  }
+  .element-atom {
+    background: none !important;
+  }
+  .interactive {
+    background: none !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body.ios,
+  body.android {
+    @include dark-mode-colors;
+
+    div.article__header {
+      background-image: url("__assetsPath__/pattern-dark.svg") !important;
+    }
+
+    section:has(> div.ad-slot-container) {
+      background: var(--primary-bg-color) !important;
+    }
+  }
+}
+
+
+// @import "$lib/styles/full-width-immersive-layout.scss"; // uncomment for full width layout
+// @import "$lib/styles/enhanced_fonts.scss"; // when you need special font features such as lining figures
+
+body {
+  @include light-mode-colors;
+
+  // dark-mode styles eg:
+  // background-color: var(--primary-bg-color) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  body.ios,
+  body.android {
+    @include dark-mode-colors;
+  }
+}
