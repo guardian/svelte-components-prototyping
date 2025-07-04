@@ -3,8 +3,10 @@
   import { onMount, createEventDispatcher } from 'svelte';
   import { database } from  '$lib/stores/chloro';
   import { get } from 'svelte/store';
+  import { getJson } from '$lib/helpers/guardian/toolbelt.js';
   import * as d3 from 'd3';
   import * as topojson from 'topojson-client';
+  const wait = ms => new Promise(res => setTimeout(res, ms));
 
   export let boundaries;
   export let overlay;
@@ -22,7 +24,17 @@
   let zoom;
   let zoomTransform = d3.zoomIdentity;
   let initialZoomApplied = false;
-
+  
+  // Reactive suburb data
+  let rawSuburbGeoJSON = null;
+  let showSuburb = false;
+  
+  // Make suburbGeoJSON reactive to recalculate when path changes
+  $: suburbGeoJSON = rawSuburbGeoJSON && path ? 
+    rawSuburbGeoJSON.features.map(feature => ({
+      d: path(feature)
+    })) : null;
+  
   // Reactive declarations for map dimensions and projection
   $: if (mapEl && width > 0) {
     const db = get(database);
@@ -60,7 +72,7 @@
 
     // Create zoom behavior
     zoom = d3.zoom()
-      .scaleExtent([0.5, 8]) // Min and max zoom levels
+      .scaleExtent([0.1, 8000]) // Much wider zoom range to allow proper fitting
       .on('zoom', handleZoom);
 
     // Apply zoom behavior to SVG
@@ -74,7 +86,49 @@
 
   function handleZoom(event) {
     zoomTransform = event.transform;
-    // The transform will be applied reactively to the g element
+    // Call the main zoomed function
+    zoomed(event);
+  }
+
+  function zoomed(event) {
+    const { transform } = event;
+    
+    // Update the main transform (this triggers reactive updates in the template)
+    zoomTransform = transform;
+    
+    // Update stroke widths based on zoom level for consistent visual thickness
+    const adjustedBoundaryStroke = baseStrokeWidth / transform.k;
+    const adjustedBasemapStroke = basemapStrokeWidth / transform.k;
+    
+    // Apply stroke width updates to map features
+    if (svgEl) {
+      d3.select(svgEl)
+        .selectAll('.boundaries path')
+        .attr('stroke-width', adjustedBoundaryStroke);
+      
+      d3.select(svgEl)
+        .selectAll('.basemap path')
+        .attr('stroke-width', adjustedBasemapStroke);
+
+      d3.select(svgEl)
+        .selectAll('.suburb-outline path')
+        .attr('stroke-width', adjustedBasemapStroke)
+        .attr("stroke-dasharray", `${2 / transform.k }, ${2 / transform.k }`)
+    }
+    
+    // Dispatch zoom event for parent components
+    dispatch('zoom', {
+      transform: transform,
+      scale: transform.k,
+      x: transform.x,
+      y: transform.y
+    });
+  }
+
+  // Function to clear suburb outline (declarative approach)
+  function clearSuburbOutline() {
+    rawSuburbGeoJSON = null;
+    showSuburb = false;
   }
 
   // Public functions for zoom controls
@@ -98,10 +152,86 @@
 
   export function resetZoom() {
     if (zoom && svgEl) {
+      clearSuburbOutline();
       d3.select(svgEl)
         .transition()
         .duration(500)
         .call(zoom.transform, d3.zoomIdentity);
+    }
+  }
+
+  export async function zoomToPostcode(postcode, lat, lng, zoomLevel = 25) {
+    if (!zoom || !svgEl || !projection || !path) return;
+
+    try {
+      // Fetch the postcode boundary data
+      const bbox = await getJson(`https://interactive.guim.co.uk/embed/aus/2023/01/australian-air-quality/geojson/${postcode}.geojson`);
+      
+      if (bbox) {
+        // Create GeoJSON feature collection for bounds calculation
+        const geojson = {
+          "type": "FeatureCollection",
+          "features": [bbox]
+        };
+
+        // Calculate bounding box in pixel coordinates
+        const [[x0, y0], [x1, y1]] = path.bounds(geojson);
+
+        // Create transform to fit the postcode area with some padding
+        const transform = d3.zoomIdentity
+          .translate(width / 2, height / 2)
+          .scale(0.7 / Math.max((x1 - x0) / width, (y1 - y0) / height))
+          .translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
+          
+        // Apply the zoom transform
+        d3.select(svgEl)
+          .transition()
+          .duration(750)
+          .call(zoom.transform, transform);
+
+        // Debug the zoom calculation like a gangsta
+        // console.log('Zoom bounds:', { x0, y0, x1, y1 });
+        // console.log('Calculated zoom scale:', 0.7 / Math.max((x1 - x0) / width, (y1 - y0) / height));
+
+        rawSuburbGeoJSON = geojson;
+        showSuburb = true;
+        
+        // Update overlay state
+        database.update(d => {
+          d.displayOverlay = false;
+          return d;
+        });
+      } else {
+        // Fallback to coordinate-based zoom if postcode data unavailable
+        zoomToLocation(lat, lng, zoomLevel);
+      }
+    } catch (error) {
+      console.warn('Error loading postcode boundary:', error);
+      // Fallback to coordinate-based zoom
+      zoomToLocation(lat, lng, zoomLevel);
+    }
+  }
+
+  export function zoomToLocation(lat, lng, zoomLevel = 4) {
+    if (zoom && svgEl && projection) {
+      // Clear any existing suburb outline
+      clearSuburbOutline();
+      
+      // Convert lat/lng to pixel coordinates
+      const centerPoint = projection([lng, lat]);
+      
+      if (centerPoint) {
+        // Calculate the transform to center on this point with the desired scale
+        const transform = d3.zoomIdentity
+          .translate(width / 2, height / 2)
+          .scale(zoomLevel)
+          .translate(-centerPoint[0], -centerPoint[1]);
+        
+        d3.select(svgEl)
+          .transition()
+          .duration(750)
+          .call(zoom.transform, transform);
+      }
     }
   }
 
@@ -166,11 +296,9 @@
     return '#eee';
   };
 
-  // Calculate stroke width based on zoom level for consistent visual thickness
-  $: baseStrokeWidth = 1; // Base stroke width for boundaries
-  $: basemapStrokeWidth = 0.5; // Base stroke width for basemap (thinner)
-  $: adjustedBoundaryStrokeWidth = baseStrokeWidth / zoomTransform.k;
-  $: adjustedBasemapStrokeWidth = basemapStrokeWidth / zoomTransform.k;
+  // Base stroke widths
+  const baseStrokeWidth = 1; // Base stroke width for boundaries
+  const basemapStrokeWidth = 0.5; // Base stroke width for basemap (thinner)
   
 </script>
 
@@ -186,7 +314,7 @@
                 d={path(feature)}
                 fill="#eee"
                 stroke="#ccc"
-                stroke-width={adjustedBasemapStrokeWidth}
+                stroke-width={basemapStrokeWidth}
                 data-feature-index={i}
               />
             {/each}
@@ -201,12 +329,25 @@
                 d={path(feature)}
                 fill={setColour(feature)}
                 stroke="#eee"
-                stroke-width={adjustedBoundaryStrokeWidth}
+                stroke-width={baseStrokeWidth}
                 data-feature-index={i}
               />
             {/each}
           </g>
         {/if}
+
+        <!-- Suburb outline layer -->
+        {#if showSuburb && suburbGeoJSON}
+            <g class="suburb-outline">
+              {#each suburbGeoJSON as { d, id }}
+              <path {d} 
+              fill={'none'}
+              stroke={'black'}
+              />
+              {/each}
+            </g>
+        {/if}
+
       </g>
     </svg>
   {:else}
@@ -225,5 +366,15 @@
   
   .map:active {
     cursor: grabbing;
+  }
+
+  :global(.suburb-boundary) {
+    pointer-events: none;
+    fill: none !important;
+    fill-opacity: 0 !important;
+  }
+  
+  :global(.suburb-outline) {
+    fill: none !important;
   }
 </style>

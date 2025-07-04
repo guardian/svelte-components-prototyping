@@ -5,7 +5,6 @@
 
   // ===== COMPONENT PROPS =====
   let {
-    boundariesURL = 'https://interactive.guim.co.uk/docsdata/1eFx2S_gpFbC1GzncQgcutPWXbj2cZEgl_dnVPKblGyc.json',
     mapKey = 'oz-230515-suburb-population-densification-map',
     location = 'docsdata',
     modal = false
@@ -16,6 +15,7 @@
   const POSTCODES_URL = 'https://interactive.guim.co.uk/docsdata/1bClr8buuWUaKj01NolwaJy2JR_SR5hKEAjQoJPaGKcw.json';
   const GIS_BASE_URL = 'https://interactive.guim.co.uk/gis';
   const PLACES_BASE_URL = 'https://interactive.guim.co.uk/embed/aus/gis-uploads';
+  const BOUNDARIES_URL = 'https://interactive.guim.co.uk/docsdata/1eFx2S_gpFbC1GzncQgcutPWXbj2cZEgl_dnVPKblGyc.json';
 
   // ===== STATE VARIABLES =====
   let mapData = $state(null);

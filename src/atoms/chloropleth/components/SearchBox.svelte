@@ -1,57 +1,77 @@
 <!-- src/lib/components/SearchBox.svelte -->
 <script>
   import { database } from  '$lib/stores/chloro';
-  import { get } from 'svelte/store';
-/**
- * Filters items by a query string, matching the given key.
- * @param {string} query - The search string.
- * @param {Array} data - The dataset to search.
- * @param {string} key - The key to match in each object.
- * @returns {Array} Filtered array.
- */
-function autocomplete(query, data, key = 'meta') {
-  const q = query.toLowerCase();
-  return data.filter(item => {
-    const value = item[key] || '';
-    return value.toLowerCase().includes(q);
-  }).slice(0, 10); // Limit results
-}
 
-/**
- * Converts large numbers to a nice readable format.
- * @param {number|string} num - The number to format.
- * @returns {string} Formatted number.
- */
-function niceNumber(num) {
-  const n = parseFloat(num);
-  if (isNaN(n)) return num;
+  export let mapContainer = null;
 
-  if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1) + 'bn';
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'm';
-  if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
+  $: db = $database;
 
-  return n % 1 === 0 ? n.toString() : n.toFixed(2);
-}
+  /**
+   * Filters items by a query string, matching the given key.
+   * @param {string} query - The search string.
+   * @param {Array} data - The dataset to search.
+   * @param {string} key - The key to match in each object.
+   * @returns {Array} Filtered array.
+   */
+  function autocomplete(query, data, key = 'meta') {
+    const q = query.toLowerCase();
+    return data.filter(item => {
+      const value = item[key] || '';
+      return value.toLowerCase().includes(q);
+    }).slice(0, 10); // Limit results
+  }
 
-  $: db = get(database);
+  /**
+   * Converts large numbers to a nice readable format.
+   * @param {number|string} num - The number to format.
+   * @returns {string} Formatted number.
+   */
+  function niceNumber(num) {
+    const n = parseFloat(num);
+    if (isNaN(n)) return num;
+
+    if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1) + 'bn';
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'm';
+    if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
+
+    return n % 1 === 0 ? n.toString() : n.toFixed(2);
+  }
 
   function handleInput(e) {
     const query = e.target.value;
     database.update(d => {
       d.searchBlock = query;
       d.displayOverlay = query.length > 2;
-      d.autocompleteArray = query.length > 2 ? autocomplete(query, d.codes, 'meta') : [];
+      d.autocompleteArray = query.length > 2 && d.codes ? autocomplete(query, d.codes, 'meta') : [];
       return d;
     });
   }
 
   function handleSelect(item) {
+    // Clear the search input and dropdown
     database.update(d => {
       d.searchBlock = '';
       d.autocompleteArray = [];
-      d.displayOverlay = true;
+      d.displayOverlay = false;
       return d;
     });
+
+    // Zoom to the selected location
+    if (mapContainer) {
+      // Try different possible field names for latitude and longitude
+      const lat = item.lat || item.latitude || item.centreLat;
+      const lng = item.lon || item.lng || item.longitude || item.centreLon;
+      const postcode = item.postcode || item.postal_code || item.zip;
+      
+      if (lat && lng) {
+        // Use postcode-based zoom if available, otherwise fall back to coordinate zoom
+        if (postcode && mapContainer.zoomToPostcode) {
+          mapContainer.zoomToPostcode(postcode, lat, lng);
+        } else if (mapContainer.zoomToLocation) {
+          mapContainer.zoomToLocation(lat, lng, 4);
+        }
+      }
+    }
   }
 </script>
 

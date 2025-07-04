@@ -28,7 +28,8 @@
 
   onMount(() => {
     database.set({
-      ...data
+      ...data,
+      codes: codes
     });
   });
 
@@ -55,7 +56,7 @@
   </div>
 
   {#if db.displaySearch}
-    <!--SearchBox /-->
+    <SearchBox {mapContainer} />
   {/if}
 
   {#if db.showKey}
