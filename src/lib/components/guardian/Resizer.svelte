@@ -2,9 +2,17 @@
 	import { onMount } from 'svelte';
 
 	function updateParentVarFromArticleBackground() {
-		const root = window.parent.document.documentElement;
-		const articleBg = getComputedStyle(root).getPropertyValue('--article-background').trim();
-		root.style.setProperty('--interactive-atom-background', articleBg);
+		try {
+			const root = window.parent.document.documentElement;
+			const articleBg = getComputedStyle(root).getPropertyValue('--article-background').trim();
+			
+			// Only set the property if the article background value exists
+			if (articleBg) {
+				root.style.setProperty('--interactive-atom-background', articleBg);
+			}
+		} catch (error) {
+			console.warn('Failed to update parent variable from article background:', error);
+		}
 	}
 
 	onMount(() => {

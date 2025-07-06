@@ -1,10 +1,4 @@
-/*
-export function getJson(url) {
-  return fetch(`${url}`).then(r => {
-    return r.json()
-  })
-}
-*/
+
 import appMap from "./appMap"
 
 export async function getJson(url) {
@@ -77,46 +71,6 @@ export function commas(num) {
     return result
 }
 
-export function createTickerFeed(data) {
-    // Filter out any entries with an empty prediction.
-    const predictions = data.electorates.filter(d => d.prediction !== "");
-  
-    // Create a Map for quick lookup of party names by party code.
-    const partyMap = new Map(data.partyNames.map(item => [item.partyCode, item]));
-  
-    // Update each prediction with additional properties.
-    predictions.forEach(prediction => {
-      prediction.announced = "Predicted"; // You can add a dynamic timestamp if needed.
-      prediction.status = prediction.prediction === prediction.incumbent ? "hold" : "wins";
-      prediction.label =
-        prediction.prediction !== "IND"
-          ? (partyMap.get(prediction.prediction)?.partyName ?? "")
-          : prediction["prediction-name"];
-    });
-  
-    // Partition predictions into those with a timestamp and those without.
-    const { withTimestamp, withoutTimestamp } = predictions.reduce(
-      (acc, item) => {
-        if (item.timestamp !== "") {
-          // Calculate Unix timestamp (in seconds).
-          item.unix = Math.floor(new Date(item.timestamp).getTime() / 1000);
-          acc.withTimestamp.push(item);
-        } else {
-          acc.withoutTimestamp.push(item);
-        }
-        return acc;
-      },
-      { withTimestamp: [], withoutTimestamp: [] }
-    );
-  
-    // Sort items that have timestamps in descending order (most recent first).
-    withTimestamp.sort((a, b) => b.unix - a.unix);
-  
-    // Return the combined array with timestamped items first.
-    return [...withTimestamp, ...withoutTimestamp];
-  }
-  
-
 /**
  * Returns a human-friendly time difference string.
  *
@@ -181,12 +135,10 @@ export function timeAgo(inputTime) {
   return                    `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
 }
 
-
-  
-  export function isoToUnix(isoDate) {
-    const msTimestamp = new Date(isoDate).getTime();
-    return Math.floor(msTimestamp / 1000);
-  }
+export function isoToUnix(isoDate) {
+  const msTimestamp = new Date(isoDate).getTime();
+  return Math.floor(msTimestamp / 1000);
+}
   
 
   export function autocomplete(inputValue, arrayOfStuff) {
@@ -221,49 +173,6 @@ export function timeAgo(inputTime) {
       }
     
     })
-  }
-
-
-  export function setColour(party) {
-    //console.log("Party: ", party)
-    const partyColours = {
-      "ALP": "alp",
-      "Australian Labor Party": "alp",
-      "Labor": "alp",
-      "Coalition": "coal",
-      "GRN": "grn",
-      "Greens": "grn",
-      "Australian Greens": "grn",
-      "IND": "ind",
-      "Independent": "ind",
-      "One Nation": "on",
-      "Katter's Australian": "kap",
-      "Katter's Australian Party": "kap",
-      "ON": "on",
-      "UAP": "uap",
-      "United Australia": "uap",
-      "KAP": "kap",
-      "XEN": "xen",
-      "CA": "ca",
-      "Nick Xenophon Team": "ca",
-      "Centre Alliance": "ca",
-      "NAT": "nat",
-      "The Nationals": "nat",
-      "Nationals": "nat",
-      "National Party of Australia": "nat",
-      "Nationals WA": "nat",
-      "LIB": "lib",
-      "Liberal": "lib",
-      "Liberal Party of Australia": "lib",
-      "LNP": "np",
-      "Liberal Nationals": "np",
-      "Liberal National": "np",
-      "Country": "nat",
-      "National Country": "nat",
-      "National Country Party": "nat",
-      "Australian Country Party": "nat"
-    };
-    return partyColours[party] ? partyColours[party] : "others";
   }
 
 
@@ -365,45 +274,50 @@ export function tallyFrequencyReversed(data, key) {
   return newFreq;
 }
 
-
-export function resizeIframe(elem="#gv-atom") {
-  if (window.frameElement) {
-    const target = document.querySelector(elem);
-
-    console.log("Inside version 1.1");
-
-    // Post message to parent window to adjust the height
-    window.parent.postMessage({
-      sentinel: 'amp',
-      type: 'embed-size',
-      height: document.body.scrollHeight
-    }, '*');
-
-    // Hide the overflow to avoid scrollbars
-    document.body.style.overflow = 'hidden';
-
-    // Set the initial height of the iframe
-    window.frameElement.height = target.offsetHeight;
-
-    // Function to detect height changes of an element
-    function onElementHeightChange(elm, callback) {
-      let lastHeight = elm.clientHeight;
-      let newHeight;
-      (function run() {
-        newHeight = elm.clientHeight;
-        if (lastHeight !== newHeight) callback();
-        lastHeight = newHeight;
-
-        if (elm.onElementHeightChangeTimer) {
-          clearTimeout(elm.onElementHeightChangeTimer);
-        }
-        elm.onElementHeightChangeTimer = setTimeout(run, 200);
-      })();
+function updateParentVarFromArticleBackground() {
+  try {
+    const root = window.parent.document.documentElement;
+    const articleBg = getComputedStyle(root).getPropertyValue('--article-background').trim();
+    
+    // Only set the property if the article background value exists
+    if (articleBg) {
+      root.style.setProperty('--interactive-atom-background', articleBg);
     }
+  } catch (error) {
+    console.log('Failed to update parent variable from article background:', error);
+  }
+}
 
-    // Watch for changes in the body's height
-    onElementHeightChange(document.body, function() {
-      window.frameElement.height = target.offsetHeight + 100;
+export function resizeIframe() {
+  if (window.self !== window.top) {
+    setTimeout(() => {
+      if (window.resize) {
+        const html = document.querySelector("html");
+        const body = document.querySelector("body");
+
+        html.style.overflow = "hidden";
+        html.style.margin = "0px";
+        html.style.padding = "0px";
+
+        body.style.overflow = "hidden";
+        body.style.margin = "0px";
+        body.style.padding = "0px";
+
+        window.resize();
+      }
+    }, 100);
+
+    const parentRoot = window.parent.document.documentElement;
+
+    updateParentVarFromArticleBackground();
+
+    const observer = new window.parent.MutationObserver(() => {
+      updateParentVarFromArticleBackground();
+    });
+
+    observer.observe(parentRoot, {
+      attributes: true,
+      attributeFilter: ['style']
     });
   }
 }
