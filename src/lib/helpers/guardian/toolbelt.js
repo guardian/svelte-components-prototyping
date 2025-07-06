@@ -236,44 +236,6 @@ export function isoToUnix(isoDate) {
     return output
   }
 
-
-  /**
- * Calculates the frequency count of values for a given key in an array of objects.
- * @param {Array} data - An array of JSON objects.
- * @param {string} key - A key name whose corresponding values in the objects will be tallied.
- * @returns {Object} An object containing the frequency of each value found under the provided key.
- */
-export function tallyFrequency(data, key) {
-  return data.reduce((acc, obj) => {
-    // Check if the object has the given key
-    if (obj.hasOwnProperty(key)) {
-      const value = obj[key];
-      // Increment the count for this value
-      acc[value] = (acc[value] || 0) + 1;
-    }
-    return acc;
-  }, {});
-}
-
-
-export function tallyFrequencyReversed(data, key) {
-  // First, get the frequency object normally.
-  const freq = tallyFrequency(data, key);
-  // Get an array of the keys (these are in insertion order,
-  // but if they are numeric, JavaScript will sort them numerically).
-  const keys = Object.keys(freq);
-  // Extract the associated values.
-  const values = keys.map(k => freq[k]);
-  // Reverse the values array.
-  const reversedValues = values.reverse();
-  // Create a new object with the same keys and the reversed values.
-  const newFreq = {};
-  keys.forEach((k, i) => {
-    newFreq[k] = String(reversedValues[i]); // convert the value to a string
-  });
-  return newFreq;
-}
-
 function updateParentVarFromArticleBackground() {
   try {
     const root = window.parent.document.documentElement;

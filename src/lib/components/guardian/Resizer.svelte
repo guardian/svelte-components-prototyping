@@ -11,7 +11,7 @@
 				root.style.setProperty('--interactive-atom-background', articleBg);
 			}
 		} catch (error) {
-			console.warn('Failed to update parent variable from article background:', error);
+			console.log('Failed to update parent variable from article background:', error);
 		}
 	}
 
