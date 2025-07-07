@@ -449,6 +449,21 @@ var tooltipUtilities = {
   }
 }
 
+export function isTouchOnlyDevice() {
+  // Check if touch events are supported
+  const hasTouch = 'ontouchstart' in window || 
+                   navigator.maxTouchPoints > 0 || 
+                   window.TouchEvent !== undefined;
+  
+  // Check if this is likely a touch-only device
+  // This includes checking for mobile user agents and lack of hover capability
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const hasHover = window.matchMedia('(hover: hover)').matches;
+  
+  // Return true if device has touch AND (is mobile OR doesn't have hover capability)
+  return hasTouch && (isMobile || !hasHover);
+}
+
 // =============================================================================
 // EXPORTS
 // =============================================================================

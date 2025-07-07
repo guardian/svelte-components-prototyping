@@ -3,19 +3,11 @@
   import { onMount, createEventDispatcher } from 'svelte';
   import { database, tooltipStore } from  '$lib/stores/chloro';
   import { get } from 'svelte/store';
-  import { getJson, mustache, tooltipUtilities } from '$lib/helpers/guardian/toolbelt.js';
+  import { getJson, mustache, tooltipUtilities, isTouchOnlyDevice } from '$lib/helpers/guardian/toolbelt.js';
   import * as d3 from 'd3';
   import * as topojson from 'topojson-client';
   const wait = ms => new Promise(res => setTimeout(res, ms));
 
-  /*
-export const tooltipStore = writable({
-  visible: false,
-  x: 0,
-  y: 0,
-  html: ''
-});
-  */
 
   export let boundaries;
   export let overlay;
@@ -293,8 +285,6 @@ export const tooltipStore = writable({
   $: currentKey = db.currentKey;
   $: tooltip = currentMapping.tooltip || "";
 
-  $:console.log(tooltip);
-
   // Reactive color scale
   $: colorScale = scaleType === "threshold" && legendValues.length > 0 && legendColors.length > 0
     ? d3.scaleThreshold().domain(legendValues.slice(1, -1)).range(legendColors)
@@ -346,16 +336,25 @@ export const tooltipStore = writable({
   }
 
   function handleClick(event, feature, index) {
-    let baseHtml = feature.properties[currentKey] !== null ? mustache(tooltip, {...utilities, ...feature.properties}) : "No data available";
+    // Only trigger on touch devices (devices without mouse events)
+    if (!isTouchOnlyDevice()) {
+      return;
+    }
+    
+    let baseHtml = feature.properties[currentKey] !== null ? mustache(tooltip, {...tooltipUtilities, ...feature.properties}) : "No data available";
     
     tooltipStore.update(t => {
-        t.visible = true;
+        t.visible = feature.properties[currentKey] !== undefined ? true : false;
+        t.touch = true;
         t.x = event.clientX + 10;
         t.y = event.clientY - 10;
         t.html = baseHtml;
         return t;
       });
   }
+
+  // Helper function to detect touch-only devices (no mouse)
+
   
 </script>
 
