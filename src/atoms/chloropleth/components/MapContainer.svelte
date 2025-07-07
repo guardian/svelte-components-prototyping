@@ -4,6 +4,7 @@
   import { database, tooltipStore } from  '$lib/stores/chloro';
   import { get } from 'svelte/store';
   import { getJson, mustache, tooltipUtilities, isTouchOnlyDevice } from '$lib/helpers/guardian/toolbelt.js';
+  import { getColourScale } from '$lib/helpers/guardian/scales.js';
   import * as d3 from 'd3';
   import * as topojson from 'topojson-client';
   const wait = ms => new Promise(res => setTimeout(res, ms));
@@ -29,6 +30,8 @@
   // Reactive suburb data
   let rawSuburbGeoJSON = null;
   let showSuburb = false;
+
+  $:console.log(places)
   
   // Make suburbGeoJSON reactive to recalculate when path changes
   $: suburbGeoJSON = rawSuburbGeoJSON && path ? 
@@ -285,15 +288,17 @@
   $: currentKey = db.currentKey;
   $: tooltip = currentMapping.tooltip || "";
 
-  // Reactive color scale
-  $: colorScale = scaleType === "threshold" && legendValues.length > 0 && legendColors.length > 0
-    ? d3.scaleThreshold().domain(legendValues.slice(1, -1)).range(legendColors)
-    : null;
+  $: colorScale = legendValues.length > 0 && legendColors.length > 0 ? getColourScale(scaleType, legendValues, legendColors) : null ;
 
-  // Reactive color function
   $: setColour = (feature) => {
     if (colorScale && currentKey && feature.properties && !isNaN(feature.properties[currentKey])) {
-      return colorScale(feature.properties[currentKey]);
+      if (scaleType === "election") {
+        return colorScale(feature.properties.Margin, feature.properties['Notional incumbent']);
+      } else if (scaleType === "swing") {
+        return colorScale(feature.properties["2PPSwing"], feature.properties['Prediction']);
+      } else {
+        return colorScale(feature.properties[currentKey]);
+      }
     }
     return '#eee';
   };
@@ -301,8 +306,6 @@
   // Base stroke widths
   const baseStrokeWidth = 1; // Base stroke width for boundaries
   const basemapStrokeWidth = 0.5; // Base stroke width for basemap (thinner)
-
-
 
 
   // Mouse event handlers for boundaries
@@ -352,8 +355,6 @@
         return t;
       });
   }
-
-  // Helper function to detect touch-only devices (no mouse)
 
   
 </script>
@@ -409,6 +410,20 @@
             </g>
         {/if}
 
+        {#if places.features.length > 0}
+          <g class="places">
+            {#each places.features as feature, i}
+              <text 
+              x={projection([feature.geometry.coordinates[0], feature.geometry.coordinates[1]])[0]} 
+              y={projection([feature.geometry.coordinates[0], feature.geometry.coordinates[1]])[1]}
+              class="labels"
+              style="font-size: {10 / zoomTransform.k}px;display: {feature.properties.scalerank - 1 < zoomTransform.k - 1 ? 'block' : 'none'}">
+                {feature.properties.name}
+              </text>
+            {/each}
+          </g>
+        {/if}
+
       </g>
     </svg>
   {:else}
@@ -437,5 +452,9 @@
   
   :global(.suburb-outline) {
     fill: none !important;
+  }
+
+  .labels {
+    font-family: 'Guardian Text Sans Web', sans-serif;
   }
 </style>
