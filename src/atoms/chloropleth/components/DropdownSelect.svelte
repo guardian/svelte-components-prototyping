@@ -1,11 +1,24 @@
 <!-- src/lib/components/DropdownSelect.svelte -->
 <script>
+  import { database } from '$lib/stores/chloro';
   export let selectedIndex;
   export let options = [];
   export let label = '';
+  export let changeType = '';
+  export let mapContainer = '';
 
   function handleChange(event) {
     selectedIndex = +event.target.value;
+    let target = options[selectedIndex];
+    if (changeType === 'changeData') {
+      database.update(d => {
+        d.currentIndex = selectedIndex;
+        d.currentKey = target.data || null;
+        return d;
+      });
+    } else if (changeType === 'changeLocation') {
+      mapContainer.zoomToLocation(+target.centreLat, +target.centreLon, +target.zoomScale);
+    }
   }
 </script>
 
@@ -20,7 +33,8 @@
 
 <style>
   .dropdown {
-    margin-bottom: 1em;
+    margin-bottom: 5px;
+    width: 100%;
   }
   
   label {

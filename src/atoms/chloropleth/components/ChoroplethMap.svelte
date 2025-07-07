@@ -24,7 +24,10 @@
   export let codes;
   export let place;
 
+  $:console.log(data);
+
   let mapContainer;
+  let testing = false
 
   onMount(() => {
     database.set({
@@ -33,10 +36,10 @@
     });
   });
 
+
 </script>
 
 <div class="map__wrapper">
-
 
   {#if db.title}
     <div class="choloropleth_title_block">
@@ -45,13 +48,13 @@
     </div>
   {/if}
 
-  <div id="controls">
+  <div class="dropdown_controls">
     {#if db.dropdown}
-      <DropdownSelect bind:selectedIndex={db.currentIndex} options={db.mapping} label="Currently showing" />
+      <DropdownSelect bind:selectedIndex={db.currentIndex} options={db.mapping} label="Currently showing" changeType={"changeData"} {mapContainer} />
     {/if}
 
     {#if db.relocate}
-      <DropdownSelect bind:selectedIndex={db.locationIndex} options={db.locations} label="Zoom to" />
+      <DropdownSelect bind:selectedIndex={db.locationIndex} options={db.locations} label="Zoom to" changeType={"changeLocation"} {mapContainer} />
     {/if}
   </div>
 
@@ -65,8 +68,14 @@
 
   <div id="mapContainer">
     <ZoomControls {mapContainer} />
-    <MapContainer bind:this={mapContainer} {boundaries} {overlay} {basemap} {places} />
-    <!--MapTooltip /-->
+    <MapContainer 
+      bind:this={mapContainer} 
+      {boundaries} 
+      {overlay} 
+      {basemap} 
+      {places}
+    />
+    <MapTooltip />
   </div>
 
   {#if db.footnote}
@@ -77,7 +86,7 @@
     <div class="notes"><small>Source: {@html db.source}</small></div>
   {/if}
 
-  {#if db.version}
+  {#if db.version && testing}
     <div class="notes"><small>{db.version}</small></div>
   {/if}
 
@@ -92,6 +101,29 @@
   .choloropleth_title_block {
     margin-bottom: 10px;
     width: 100%;
+  }
+
+  // Mobile and smaller - stacked layout
+  @include mq($until: mobileLandscape) {
+    .dropdown_controls {
+      flex-direction: column;
+      gap: 10px;
+      align-items: stretch;
+    }
+  }
+  
+  // Above mobile landscape - side by side with 50% width minus gap
+  @include mq($from: mobileLandscape) {
+    .dropdown_controls {
+      flex-direction: row;
+      gap: 16px;
+      align-items: center;
+      justify-content: flex-start;
+      
+      :global(.dropdown-select) {
+        width: calc(50% - 8px);
+      }
+    }
   }
 
   .chartTitle {
@@ -115,5 +147,10 @@
     font-family: 'Guardian Text Sans Web',Arial;
     font-size:11px;
     color:#767676;
+  }
+
+  .dropdown_controls {
+    display: flex;
+    margin-bottom: 10px;
   }
 </style>

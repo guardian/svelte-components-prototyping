@@ -96,9 +96,7 @@
 </div>
 
 <style>
-  .search__container {
-    margin-top: 1em;
-  }
+
   .search__input {
     width: 100%;
     padding: 0.5em;

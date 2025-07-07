@@ -1,12 +1,21 @@
 <!-- src/lib/components/MapContainer.svelte -->
 <script>
   import { onMount, createEventDispatcher } from 'svelte';
-  import { database } from  '$lib/stores/chloro';
+  import { database, tooltipStore } from  '$lib/stores/chloro';
   import { get } from 'svelte/store';
-  import { getJson } from '$lib/helpers/guardian/toolbelt.js';
+  import { getJson, mustache, tooltipUtilities } from '$lib/helpers/guardian/toolbelt.js';
   import * as d3 from 'd3';
   import * as topojson from 'topojson-client';
   const wait = ms => new Promise(res => setTimeout(res, ms));
+
+  /*
+export const tooltipStore = writable({
+  visible: false,
+  x: 0,
+  y: 0,
+  html: ''
+});
+  */
 
   export let boundaries;
   export let overlay;
@@ -282,6 +291,9 @@
   $: legendColors = currentMapping.colours?.split(',') || [];
   $: scaleType = (currentMapping.scale || '').toLowerCase();
   $: currentKey = db.currentKey;
+  $: tooltip = currentMapping.tooltip || "";
+
+  $:console.log(tooltip);
 
   // Reactive color scale
   $: colorScale = scaleType === "threshold" && legendValues.length > 0 && legendColors.length > 0
@@ -299,6 +311,51 @@
   // Base stroke widths
   const baseStrokeWidth = 1; // Base stroke width for boundaries
   const basemapStrokeWidth = 0.5; // Base stroke width for basemap (thinner)
+
+
+
+
+  // Mouse event handlers for boundaries
+  function handleMouseEnter(event, feature, index) {
+
+    let baseHtml = feature.properties[currentKey] !== null ? mustache(tooltip, {...tooltipUtilities, ...feature.properties}) : "No data available";
+
+      tooltipStore.update(t => {
+        t.visible = feature.properties[currentKey] !== undefined ? true : false;
+        t.x = event.clientX + 10;
+        t.y = event.clientY - 10;
+        t.html = baseHtml;
+        return t;
+      });
+    
+  }
+
+  function handleMouseLeave(event, feature, index) {
+    tooltipStore.update(t => {
+        t.visible = false;
+        return t;
+      });
+  }
+
+  function handleMouseMove(event, feature, index) {
+    tooltipStore.update(t => {
+        t.x = event.clientX + 10;
+        t.y = event.clientY - 10;
+        return t;
+      });
+  }
+
+  function handleClick(event, feature, index) {
+    let baseHtml = feature.properties[currentKey] !== null ? mustache(tooltip, {...utilities, ...feature.properties}) : "No data available";
+    
+    tooltipStore.update(t => {
+        t.visible = true;
+        t.x = event.clientX + 10;
+        t.y = event.clientY - 10;
+        t.html = baseHtml;
+        return t;
+      });
+  }
   
 </script>
 
@@ -331,6 +388,11 @@
                 stroke="#eee"
                 stroke-width={baseStrokeWidth}
                 data-feature-index={i}
+                on:mouseenter={(e) => handleMouseEnter(e, feature, i)}
+                on:mouseleave={(e) => handleMouseLeave(e, feature, i)}
+                on:mousemove={(e) => handleMouseMove(e, feature, i)}
+                on:click={(e) => handleClick(e, feature, i)}
+                style="cursor: pointer;"
               />
             {/each}
           </g>
