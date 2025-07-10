@@ -178,8 +178,6 @@
 
     function createDefaultMapping(columnSchema, processedData = null) {
 
-      console.log(columnSchema)
-
       const { column, dataTypes, formats } = columnSchema;
       const format = formats[0].format;
       const isNumeric = dataTypes.includes('number');
@@ -432,7 +430,7 @@
           const dataSchema = schema(processedData);
           const currentDataID = getDataId(processedData);
           
-          //log('Data schema analysis:', dataSchema);
+          log('Data schema analysis:', JSON.stringify(dataSchema, null, 2));
           //log('Current dataID:', currentDataID);
 
           // Find first column that's not the dataID
@@ -444,7 +442,7 @@
           }
 
           const selectedColumn = availableColumns[0];
-          log('Selected column for default mapping:', selectedColumn);
+          //log('Selected column for default mapping:', selectedColumn);
 
           // Create mapping based on column type
           const defaultMapping = createDefaultMapping(selectedColumn, processedData);

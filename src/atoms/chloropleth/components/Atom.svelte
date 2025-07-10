@@ -4,14 +4,8 @@
   import { getJson } from '$lib/helpers/guardian/toolbelt.js';
   import Chloropleth from './Chloropleth.svelte';
   import Logger from '$lib/components/guardian/Logger.svelte';
-  //import { schema } from 'newsroom-dojo/dist/index.js'
 
-
-  //import {getExampleData, exampledata} from '$lib/stores/example.svelte.js';
-  //import Scrolly from '$lib/components/Scrolly.svelte'
-  
-
-  // Component props
+  // Data for the maps.
   let data = $state([]);
 
   // Component lifecycle
@@ -24,7 +18,6 @@
 
 </script>
 
-
 <div class="atom">
 
   <Logger testing={false} />
@@ -33,7 +26,10 @@
     <Chloropleth 
       {data}
       boundary={'sa3'}
-      title={'My amazing headline'}
+      title={'My amazing map headline'}
+      subtitle={''}
+      footnote={''}
+      source={'The Guardian'}
     />
   {:else}
     <h1>No data</h1>
@@ -52,7 +48,5 @@
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 20px;
-
-  
   }
 </style>
