@@ -30,8 +30,6 @@
   // Reactive suburb data
   let rawSuburbGeoJSON = null;
   let showSuburb = false;
-
-  $:console.log(places)
   
   // Make suburbGeoJSON reactive to recalculate when path changes
   $: suburbGeoJSON = rawSuburbGeoJSON && path ? 
@@ -279,7 +277,6 @@
     }
   }
 
-  // Reactive database access
   $: db = $database;
   $: currentMapping = db.mapping?.[db.currentIndex] || {};
   $: legendValues = currentMapping.values?.split(',') || [];
@@ -307,8 +304,6 @@
   const baseStrokeWidth = 1; // Base stroke width for boundaries
   const basemapStrokeWidth = 0.5; // Base stroke width for basemap (thinner)
 
-
-  // Mouse event handlers for boundaries
   function handleMouseEnter(event, feature, index) {
 
     let baseHtml = feature.properties[currentKey] !== null ? mustache(tooltip, {...tooltipUtilities, ...feature.properties}) : "No data available";

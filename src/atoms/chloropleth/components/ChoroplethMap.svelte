@@ -24,8 +24,6 @@
   export let codes;
   export let place;
 
-  $:console.log(data);
-
   let mapContainer;
   let testing = false
 
@@ -49,11 +47,11 @@
   {/if}
 
   <div class="dropdown_controls">
-    {#if db.dropdown}
+    {#if data.mapping.length > 1 && db.dropdown}
       <DropdownSelect bind:selectedIndex={db.currentIndex} options={db.mapping} label="Currently showing" changeType={"changeData"} {mapContainer} />
     {/if}
 
-    {#if db.relocate}
+    {#if data.locations.length > 1 && db.relocate}
       <DropdownSelect bind:selectedIndex={db.locationIndex} options={db.locations} label="Zoom to" changeType={"changeLocation"} {mapContainer} />
     {/if}
   </div>

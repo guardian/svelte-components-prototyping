@@ -46,6 +46,7 @@
     "@guardian/interactive-component-library": "0.1.0-alpha.20",
     "@sveltejs/svelte-scroller": "^2.0.7",
     "hls.js": "^1.6.5",
+    "newsroom-dojo": "^1.2.5",
     "preact": "^10.19.6",
     "shaka-player": "^4.15.3",
     "subtitles-parser": "^0.0.2"
