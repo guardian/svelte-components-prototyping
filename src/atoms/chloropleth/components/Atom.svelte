@@ -3,7 +3,7 @@
   import { onMount } from 'svelte'
   import { getJson } from '$lib/helpers/guardian/toolbelt.js';
   import Chloropleth from './Chloropleth.svelte';
-  import Logger from '$lib/components/guardian/Logger.svelte';
+  import Logger from './Logger.svelte';
 
   // Data for the maps.
   let data = $state([]);
