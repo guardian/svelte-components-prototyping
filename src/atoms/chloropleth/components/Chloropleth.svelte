@@ -3,7 +3,7 @@
     import { getJson, merge, contains } from '$lib/helpers/guardian/toolbelt.js';
     import { log, logMessages, clearLogs } from '$lib/stores/logger.svelte.js';
     import ChoroplethMap from './ChoroplethMap.svelte';
-    import { schema } from '$lib/helpers/schema'
+    import { schema } from '$lib/helpers/guardian/schema'
 
     // ===== COMPONENT PROPS =====
     let {
