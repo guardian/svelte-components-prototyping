@@ -279,8 +279,8 @@
 
   $: db = $database;
   $: currentMapping = db.mapping?.[db.currentIndex] || {};
-  $: legendValues = currentMapping.values?.split(',') || [];
-  $: legendColors = currentMapping.colours?.split(',') || [];
+  $: legendValues = currentMapping.values?.split(',').map(v => v.trim()) || [];
+  $: legendColors = currentMapping.colours?.split(',').map(c => c.trim()) || [];
   $: scaleType = (currentMapping.scale || '').toLowerCase();
   $: currentKey = db.currentKey;
   $: tooltip = currentMapping.tooltip || "";
@@ -288,14 +288,22 @@
   $: colorScale = legendValues.length > 0 && legendColors.length > 0 ? getColourScale(scaleType, legendValues, legendColors) : null ;
 
   $: setColour = (feature) => {
-    if (colorScale && currentKey && feature.properties && !isNaN(feature.properties[currentKey])) {
+    if (colorScale && currentKey && feature.properties && feature.properties[currentKey] != null) {
       if (scaleType === "election") {
         return colorScale(feature.properties.Margin, feature.properties['Notional incumbent']);
       } else if (scaleType === "swing") {
         return colorScale(feature.properties["2PPSwing"], feature.properties['Prediction']);
-      } else {
-        return colorScale(feature.properties[currentKey]);
-      }
+              } else {
+          // Handle both numeric and categorical data
+          const value = feature.properties[currentKey];
+          if (scaleType === 'ordinal') {
+            // For categorical data, pass the value directly (string or number)
+            return colorScale(value);
+          } else {
+            // For numeric scales, ensure it's a valid number
+            return !isNaN(value) ? colorScale(value) : '#eee';
+          }
+        }
     }
     return '#eee';
   };

@@ -10,7 +10,7 @@
 
   // Component lifecycle
   onMount(async() => {
-    const url = `https://interactive.guim.co.uk/docsdata/1to_mCAULU5VxjkgEIRRGvVapcjDu0trb77xNnOVXCN4.json`;
+    const url = `https://interactive.guim.co.uk/docsdata/1PGsDvvo4x9tFw8zfVP3vnfjOMtZBAcxLZNxkRGthZ3A.json`;
     const json = await getJson(url);
     let keys = Object.keys(json.sheets);
     data = json.sheets[keys[0]];
@@ -25,9 +25,9 @@
   {#if data.length > 0}
     <Chloropleth 
       {data}
-      boundary={'sa3'}
+      boundary={'2025_federal_boundaries'}
       title={'My amazing map headline'}
-      subtitle={''}
+      subtitle={'Link to <a target="_blank" href="https://docs.google.com/spreadsheets/d/1eFx2S_gpFbC1GzncQgcutPWXbj2cZEgl_dnVPKblGyc/edit?gid=807652696#gid=807652696">boundaries googledoc</a>'}
       footnote={''}
       source={'The Guardian'}
     />

@@ -6,10 +6,30 @@ function getColourScale(scaleType, legendValues, legendColors) {
     let median = d3.median(legendValues);
     let mean = d3.mean(legendValues);
 
-    if (scaleType === "threshold") {
+    if (scaleType === "threshold" || scaleType === "scaleThreshold") {
         return d3.scaleThreshold().domain(legendValues.slice(1, -1)).range(legendColors);
     }
     
+    else if (scaleType === "ordinal" || scaleType === "scaleOrdinal") {
+        return d3.scaleOrdinal().domain(legendValues).range(legendColors);
+    }
+    
+    else if (scaleType === "linear median" || scaleType === "scaleLinearMedian") {
+        return d3.scaleLinear().domain([min, median, max]).range(legendColors);
+    }
+    
+    else if (scaleType === "linear mean" || scaleType === "scaleLinearMean") {
+        return d3.scaleLinear().domain([min, mean, max]).range(legendColors);
+    }
+    
+    else if (scaleType === "quantile" || scaleType === "scaleQuantile") {
+        return d3.scaleQuantile().domain([min, max]).range(legendColors);
+    }
+    
+    else if (scaleType === "quantize" || scaleType === "scaleQuantize") {
+        return d3.scaleQuantize().domain([min, max]).range(legendColors);
+    }
+
     else if (scaleType === "election") {
         var marginQuint = [6, 12, 18, 24];
         var colBlue = ['rgb(189,215,231)', 'rgb(107,174,214)', 'rgb(49,130,189)', 'rgb(8,81,156)'];
@@ -51,27 +71,7 @@ function getColourScale(scaleType, legendValues, legendColors) {
             return (swing < 0) ? scaleRed(Math.abs(swing)) : scaleBlue(swing);
         };
     }
-    
-    else if (scaleType === "ordinal") {
-        return d3.scaleOrdinal().domain(legendValues).range(legendColors);
-    }
-    
-    else if (scaleType === "linear median") {
-        return d3.scaleLinear().domain([min, median, max]).range(legendColors);
-    }
-    
-    else if (scaleType === "linear mean") {
-        return d3.scaleLinear().domain([min, mean, max]).range(legendColors);
-    }
-    
-    else if (scaleType === "quantile") {
-        return d3.scaleQuantile().domain([min, max]).range(legendColors);
-    }
-    
-    else if (scaleType === "quantize") {
-        return d3.scaleQuantize().domain([min, max]).range(legendColors);
-    }
-    
+
     else {
         return d3.scaleLinear().domain([min, max]).range(legendColors);
     }

@@ -34,6 +34,15 @@
     });
   });
 
+  // Reactively update database when data changes (e.g., when mapping is auto-generated)
+  $: if (data) {
+    database.update(currentDb => ({
+      ...currentDb,
+      ...data,
+      codes: codes
+    }));
+  }
+
 
 </script>
 

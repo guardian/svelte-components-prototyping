@@ -3,7 +3,9 @@
     import { getJson, merge, contains } from '$lib/helpers/guardian/toolbelt.js';
     import { log, logMessages, clearLogs } from '$lib/stores/logger.svelte.js';
     import ChoroplethMap from './ChoroplethMap.svelte';
-    import { schema } from '$lib/helpers/guardian/schema'
+    import { schema, detectOrdinalPattern } from '$lib/helpers/guardian/schema'
+    import { getPartyColors, defaultColors } from '$lib/helpers/guardian/colours'
+    import chroma from "chroma-js";
 
     // ===== COMPONENT PROPS =====
     let {
@@ -19,8 +21,8 @@
       data = null,
       mapping = [],
       locations = null,
-      boundaryID = null, // By default this property will be auto-detected from the topojson. This is the property in the topojson that will be used to map the data.
-      dataID = null // By default this property is set using the first key from the data. This is the property in the data that will be used to match the boundaries.
+      boundaryID = null, // By default this property will be auto-detected from the topojson. This is the property in the topojson that will be used to map the boundary to the data.
+      dataID = null // By default this property is set using the first key from the data. This is the property in the data that will be used to map the data to the boundaries.
     } = $props();
 
     // ===== CONSTANTS =====
@@ -30,6 +32,7 @@
     const PLACES_BASE_URL = 'https://interactive.guim.co.uk/embed/aus/gis-uploads';
     const BOUNDARIES_URL = 'https://interactive.guim.co.uk/docsdata/1eFx2S_gpFbC1GzncQgcutPWXbj2cZEgl_dnVPKblGyc.json';
 
+    const partyArray = ["ALP","LIB","LNP","NAT","IND","GRN","CA","KAP","PUP","CA","NXT","XEN","ON","UAP"]
     // ===== STATE VARIABLES =====
     let mapData = $state(null);
     let postcodes = $state(null);
@@ -176,6 +179,8 @@
       return detectedID;
     }
 
+
+
     function createDefaultMapping(columnSchema, processedData = null) {
 
       const { column, dataTypes, formats } = columnSchema;
@@ -226,14 +231,82 @@
         };
       } else {
         // Create categorical mapping for strings
+        let actualValues = "Category A, Category B, Category C"; // fallback to random categories to illustrate to the user how this field is populated.
+        let categoricalColors = "#1f77b4,#ff7f0e,#2ca02c"; // default 3 colors
+        let scaleType = 'ordinal'; // default to ordinal for categorical data (D3 standard)
+        let isLikelyOrdinal = false; // default to false for unordered categories
+        
+        if (processedData && processedData.length > 0) {
+          // Extract unique values and their frequencies using Set and Map
+          const valueFrequency = new Map();
+          
+          processedData.forEach(item => {
+            const value = item[column];
+            if (value != null && value !== '') {
+              const stringValue = String(value).trim();
+              valueFrequency.set(stringValue, (valueFrequency.get(stringValue) || 0) + 1);
+            }
+          });
+          
+          // Sort by frequency (descending) and take top values
+          const sortedValues = [...valueFrequency.entries()]
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10) // Take top 5 most common
+            .map(([value, _]) => value);
+          
+          if (sortedValues.length > 0) {
+            actualValues = sortedValues.join(','); // No spaces to avoid issues when split
+            
+            // Detect if this might be ordinal data (has natural ordering)
+            const isLikelyOrdinal = detectOrdinalPattern(sortedValues);
+            // Always use 'ordinal' scale type for D3 compatibility
+            scaleType = 'ordinal';
+            
+            // Choose colors based on whether data has natural ordering
+            if (isLikelyOrdinal) {
+              // Use sequential colors for ranked data (light to dark) generated from defaultColors
+              const generateOrdinalPalette = (length) => {
+                const baseColor = defaultColors[0]; // Use first color as base
+                const lightColor = chroma(baseColor).brighten(2).hex();
+                const darkColor = chroma(baseColor).darken(1).hex();
+                
+                if (length === 1) {
+                  return lightColor;
+                }
+                
+                return chroma.scale([lightColor, darkColor])
+                  .mode('lab')
+                  .colors(length)
+                  .join(',');
+              };
+              
+              categoricalColors = generateOrdinalPalette(sortedValues.length);
+                          } else {
+                // Use distinct colors for unordered categories from defaultColors
+                const generateNominalPalette = (length) => {
+                  return defaultColors.slice(0, Math.min(length, defaultColors.length)).join(',');
+                };
+
+                // Are the values related to political parties? If so then assign the party colours. Check if sortedValues is a subset of partyArray (case insensitive)
+                const isSubset = sortedValues.every(value => partyArray.includes(value.toUpperCase()));
+                
+                if (isSubset) {
+                  categoricalColors = sortedValues.map(value => getPartyColors(value.toLowerCase())).join(',');
+                } else {
+                  categoricalColors = generateNominalPalette(sortedValues.length);
+                }
+              }
+          }
+        }
+        
         return {
           data: column,
           display: `${column} (auto-generated)`,
-          values: "Category A, Category B, Category C", // Generic categories
-          colours: "#1f77b4,#ff7f0e,#2ca02c", // Categorical colors
+          values: actualValues,
+          colours: categoricalColors,
           tooltip: tooltip,
-          scale: 'ordinal',
-          keyText: `${column} categories →`
+          scale: scaleType,
+          keyText: `${column} ${isLikelyOrdinal ? 'levels' : 'categories'} →`
         };
       }
     }
@@ -426,7 +499,7 @@
         }
 
         try {
-          // Use our custom schema function for reliable analysis
+
           const dataSchema = schema(processedData);
           const currentDataID = getDataId(processedData);
           
@@ -444,10 +517,12 @@
           const selectedColumn = availableColumns[0];
           //log('Selected column for default mapping:', selectedColumn);
 
-          // Create mapping based on column type
+          // Create mapping object based on column type
           const defaultMapping = createDefaultMapping(selectedColumn, processedData);
 
+          // Paste these into settings and edit them to your liking
           log('Mapping settings:', JSON.stringify(defaultMapping, null, 2));
+
           // Update the mapping prop
           mapping = [defaultMapping];
 

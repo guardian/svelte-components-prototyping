@@ -464,6 +464,17 @@ export function isTouchOnlyDevice() {
   return hasTouch && (isMobile || !hasHover);
 }
 
+/**
+ * Swaps the rows and columns of a 2D array.
+ *
+ * @param {Array} arr - The input 2D array.
+ * @returns {Array} - The transposed 2D array.
+ */
+export function swapArray(arr) {
+  return arr[0].map((col, i) => arr.map(row => row[i]));
+}
+
+
 // =============================================================================
 // EXPORTS
 // =============================================================================
